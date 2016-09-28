@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Live Read</title>
+    <link rel="stylesheet" href="/bootstrap/css">
+      </head>
+  <body>
+    <h3 class="content">
+      
+    </h3>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/P5/js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  var socket = io();
+  socket.on('data',function(data){
+    $('.content').html(data);
+  });
+</script>
+  </body>
+</html>

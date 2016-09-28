@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <link rel="stylesheet" href="/bootstrap/css">
+      </head>
+  <body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/P5/js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  var user;
+  var socket = io();
+  var players = [];
+  var Square = function(inX,inY,inSize,inColor){
+    console.log(inColor);
+    this.x = inX;
+    this.y = inY;
+    this.size = inSize;
+    this.speed = 3;
+    this.color = inColor;
+    this.direction = [1,1]; 
+    this.move = function(dirX,dirY){
+      if(dirX != 0){
+        this.x += this.speed * dirX;
+      }
+      if(dirY != 0){
+        this.y += this.speed * dirY;
+      }
+      var sender = {'x' : this.x, 'y' : this.y, 'size' : this.size, 'color' : this.color};
+      socket.emit('update',sender);
+    };
+    this.draw = function(){
+      
+      clear();
+      fill(this.color);
+      rect(this.x,this.y,this.size,this.size);
+    };
+  };
+  
+  var setup = function(){
+    createCanvas(windowWidth,windowHeight);
+  };
+  var draw = function(){
+    background(255);
+    if(keyIsDown(LEFT_ARROW)){
+      user.move(-1,0);
+    }
+    if(keyIsDown(RIGHT_ARROW)){
+      user.move(1,0);
+    }
+    if(keyIsDown(UP_ARROW)){
+      user.move(0,-1);
+    }
+    if(keyIsDown(DOWN_ARROW)){
+      user.move(0,1);
+    }
+    for(i=0; i < players.length; i++ ){
+      fill(players[i].color);
+      rect(players[i].x,players[i].y,players[i].size,players[i].size);
+    }
+  };
+  
+  socket.on('Start', function(data){
+    user = new Square(data.x,data.y,data.size,data.color);
+  });
+  socket.on('UpdateUsers',function(data){
+    players = data;
+  });
+ $('.move').click(function(){
+   user.move();
+ });
+  $('.debug').click(function(){
+   console.log(players);
+ });
+</script>
+  </body>
+</html>
